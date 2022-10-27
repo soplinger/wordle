@@ -1,3 +1,4 @@
+# server.py created by Sean Oplinger on 10/26/22
 import socket
 
 localIP = "127.0.0.1"
