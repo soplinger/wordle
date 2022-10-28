@@ -1,12 +1,14 @@
 # server.py created by Sean Oplinger on 10/26/22
 import socket
+import random
+
+with open("dict.txt", "r") as file:
+    allText = file.read()
+    words = list(map(str, allText.split()))
 
 localIP = "127.0.0.1"
 localPort = 20001
 bufferSize = 1024
-
-msgFromServer = "Hello from Server"
-bytesToSend = str.encode(msgFromServer)
 
 UDPServerSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 
@@ -24,5 +26,7 @@ while (True):
 
     print(clientMsg)
     print(clientIP)
+
+    bytesToSend = str.encode(random.choice(words))
 
     UDPServerSocket.sendto(bytesToSend, address)
