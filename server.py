@@ -1,6 +1,8 @@
 # server.py created by Sean Oplinger on 10/26/22
 import socket
 import random
+import sys
+import json
 
 with open("dict.txt", "r") as file:
     allText = file.read()
@@ -20,6 +22,10 @@ while (True):
     bytesAddressPair = UDPServerSocket.recvfrom(bufferSize)
     message = bytesAddressPair[0]
     address = bytesAddressPair[1]
+
+    m = {"word": random.choice(words)}
+
+    data = json.dumps(m)
 
     clientMsg = "Message from Client:{}".format(message)
     clientIP = "Client IP Address:{}".format(address)
