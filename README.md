@@ -1,1 +1,1 @@
-# wordle-server
+# wordle
