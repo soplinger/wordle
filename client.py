@@ -1,9 +1,10 @@
 import random
 import socket
-import sys 
-from wordle_library import try_send, print_err, ServerAddress, Colors, HELLO, WIN, LOSE
+import sys
+
 from game import start_game
-from wordle_library.response_strs import AGAIN, BYE
+from wordle_library import (AGAIN, BYE, HELLO, LOSE, WIN, Colors,
+                            ServerAddress, print_err, try_send)
 
 MAX_BUFFER_SIZE = 1024
 
@@ -48,7 +49,7 @@ def main():
     # msg = f"Message from Server {response}"
     # print(msg)  # print out solution
     while True:
-        outcome = start_game(response.decode(), client_socket)
+        outcome = start_game(response.decode().lower(), client_socket)
         outcome_msg = f"{WIN} {outcome[1]}" if outcome[0] else f"{LOSE} {outcome[1]}"
         try_send(client_socket, outcome_msg)
 
@@ -59,8 +60,7 @@ def main():
             continue
         else:
             try_send(client_socket, BYE)
-            exit(0)
-
+            break
 
 
 if __name__ == "__main__":
