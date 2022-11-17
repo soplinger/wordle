@@ -5,7 +5,6 @@ HELLO = "Hello"
 PLAYING = "Playing"
 WIN = "Win"
 LOSE = "Lose"
-STALE = "Stale"
 
 # replay messages
 AGAIN = "Again"

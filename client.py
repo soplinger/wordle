@@ -17,7 +17,7 @@ def main():
     name = "Guest#" + str(random.randint(0, 1000000000))
     if len(sys.argv) > 1:
         hostname = sys.argv[1]
-        print(f"Custom Hostname: {hostname}")
+        print(f"Custom hostname entered: {hostname}")
         server_addr = server_addr._replace(hostname=hostname)
 
         if len(sys.argv) > 2:
@@ -27,10 +27,10 @@ def main():
                 server_addr = server_addr._replace(port=port)
                 if len(sys.argv) > 3:
                     name = sys.argv[2]
-                    print(f"Welcome user {name}")
             elif sys.argv[2]:
                 name = sys.argv[2]
-                print(f"Welcome user {name}")
+            
+            print(f"Welcome user {name}")
 
     ready_msg = HELLO + f" {name}"
 

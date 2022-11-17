@@ -1,4 +1,4 @@
-""" Wordle game 
+""" Wordle game client code 
     Starts with the function start_game
     The same function will return the outcome of the game
 """
@@ -7,8 +7,7 @@ from socket import socket
 from wordle_library import Colors
 from typing import Tuple
 
-from wordle_library import try_send
-from wordle_library.response_strs import PLAYING 
+from wordle_library import try_send, PLAYING
 
 MAX_ATTEMPTS = 5
 
