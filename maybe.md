@@ -1,0 +1,3 @@
+- connect to ios app maybe
+- print out emoji graph / picture
+- 
