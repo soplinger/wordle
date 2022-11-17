@@ -1,12 +1,14 @@
-""" Wordle game based on the popular game, Wordle
+""" Wordle game 
     Starts with the function start_game
     The same function will return the outcome of the game
 """
 from enum import Enum
+from socket import socket
+from wordle_library import Colors
 
 MAX_ATTEMPTS = 5
 
-def start_game(word: str) -> bool:
+def start_game(word: str, socket: socket) -> bool:
     """ Start the game of wordle and commence gameplay
         word <- the word trying to be guessed by the user
         Returns True if the player wins the game, False if the player exceeds max attempts
@@ -26,17 +28,22 @@ def start_game(word: str) -> bool:
         if len(guess) != 5:
             print("Guess must be 5 characters")
             continue
-        if not guess.isalpha:
+        if not guess.isalpha():
             print("Guess must only contain letters")
             continue
 
         guess = W_Guess(guess)  # convert guess into wordle guess with the result encapsulated
         is_winner = guess.check(word)
-        prev_guesses.append(guess)
         if is_winner:
+            print(guess.output())
             print(f"You got the word in {num_attempts}")
             print("======Game Finish======")
             return True
+
+        prev_guesses.append(guess)
+        num_attempts += 1
+        socket.try_send()
+
 
     # All attempts used up, you lose
     print(f"Darn you couldn't guess {word}")
@@ -52,7 +59,8 @@ class W_GuessType(Enum):
 class W_Guess:
     def __init__(self, word: str):
         self.word = word    # word being guessed
-        self.result = [W_GuessType.WrongPosWrongLetter for _ in range(5)] # parallel array to word showing which letter matches
+        # parallel array to word showing which letter matches
+        self.result = [W_GuessType.WrongPosWrongLetter for _ in range(5)] 
 
     def check(self, correct_word: str) -> bool:
         "Returns True if word matches exactly, otherwise false and updates result with status of guess"
@@ -71,8 +79,6 @@ class W_Guess:
     
     def output(self) -> str:
         """Returns a colored string of the guess based on the result of the word"""
-        # for result in enumerate(self.result): # debug for printing status
-        #     print(f"{result[0]}:{result[1]}")
         output = ""
         for idx, letter in enumerate(self.word):
             if self.result[idx] == W_GuessType.CorrectPosCorrectLetter:
@@ -84,12 +90,3 @@ class W_Guess:
             output += f"{color}{letter}"
         output += Colors.Normal   # reset terminal to display white text
         return output
-
-class Colors:
-    Green = "\033[92m"  # correct pos correct letter
-    Yellow = "\033[33m" # wrong pos correct letter
-    Red = "\033[31m"    # wrong pos wrong letter
-    Normal = "\033[0m"  # the usual color(white) for the terminal
-
-if __name__ == "__main__":
-    start_game("quinn")
