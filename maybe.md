@@ -1,3 +1,4 @@
 - connect to ios app maybe
 - print out emoji graph / picture
-- 
+- recording stats of users
+- password verification

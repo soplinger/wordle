@@ -3,9 +3,11 @@
 import random
 import socket
 import threading
+import time
 from typing import Tuple
+#TODO: switch to this maybe >>> from socketserver import ThreadingTCPServer 
 
-from wordle_library import print_err, try_send
+from wordle_library import try_send
 from wordle_library.response_strs import AGAIN, BYE, LOSE, PLAYING, STALE, WIN
 
 HOSTNAME = "127.0.0.1"
@@ -15,30 +17,24 @@ TIMEOUT_SECS = 10000
 MAX_CONNECTIONS = 100
 
 def main():
-    try:
-        server_socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
+    with socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM) as server_socket:
         # allows the socket to reuse a previous socket on the same address
         server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server_socket.bind((HOSTNAME, PORT))
-    except socket.error as e:
-        print_err(f"Error while creating socket: {e}")
-        exit(-1)
+        server_socket.listen(MAX_CONNECTIONS)
+        print("TCP Server created and listening...")
 
-    print("TCP Server created and listening...")
+        while True:
+            new_socket, _ = server_socket.accept()
+            thread = threading.Thread(target=user_handler, args=[new_socket])
+            thread.start()
 
-    server_socket.listen(MAX_CONNECTIONS)
-
-    while (True):
-        new_socket, _ = server_socket.accept()
-        thread = threading.Thread(target=user_handler, args=[new_socket])
-        thread.start()
 
 def user_handler(sender: socket.socket):
     sender.settimeout(TIMEOUT_SECS)
 
     # Initial connection message and username obtained
     response = sender.recv(MAX_BUFFER_SIZE)
-    print(f"Recieved {response}") #debug statement
     responses = response.decode().split()
 
     username: str = ""
@@ -47,28 +43,36 @@ def user_handler(sender: socket.socket):
         info = sender.getpeername()
         print(f"Client {info} did not send a username generating a random name")
         username = "Guest#" + random.randint(0, 1000000000)
-    username = responses[1]
+    else:
+        username = responses[1]
+    print(f"{username} has started a session connection to the server")
 
     while True:     # Gameplay loop, player can solve more puzzles
+        start = time.time()
         outcome, num_attempts = start_game(sender, username)
-
-        if outcome == WIN:
-            # record data
-            pass
-        elif outcome == LOSE:
-            # record data
+        end = time.time()
+        gametime = (end - start) / 60
+        
+        if outcome == WIN or outcome == LOSE:
+            # TODO record data
             pass
         elif outcome == STALE:
-            exit(-1)
+            break
     
+        # Ask the client if they want to play again
         try_send(sender, AGAIN)
 
-        response = sender.recv(MAX_BUFFER_SIZE)
+        try:
+            response = sender.recv(MAX_BUFFER_SIZE)
+        except socket.timeout:
+            print(f"{username} was inactive for {TIMEOUT_SECS} seconds, ending session")
+
         response = response.decode()
-        if response == AGAIN:
-            continue
-        elif response == BYE:
-            exit(-1)
+        if response == BYE:
+            break
+
+    sender.close()
+    exit(0)
 
 def start_game(sender: socket.socket, username: str) -> Tuple[str, int]:
     """ Runs the serverside of the wordle game\n
@@ -101,6 +105,8 @@ def start_game(sender: socket.socket, username: str) -> Tuple[str, int]:
             print(f"Client: {username} {responses[0]} and finished in {responses[1]} attempts")
             return responses[0], responses[1]
 
+
+#
 with open("dict.txt", "r") as file:
     allText = file.read()
     words = list(map(str, allText.split()))

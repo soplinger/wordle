@@ -3,7 +3,7 @@ import socket
 import sys
 
 from game import start_game
-from wordle_library import (AGAIN, BYE, HELLO, LOSE, WIN, Colors,
+from wordle_library import (WORD, BYE, HELLO, LOSE, WIN, Colors,
                             ServerAddress, print_err, try_send)
 
 MAX_BUFFER_SIZE = 1024
@@ -56,7 +56,7 @@ def main():
         response = client_socket.recv(MAX_BUFFER_SIZE)
         choice = input("Would you like to play again? (y/n): ")
         if str.lower(choice) == 'y':
-            try_send(client_socket, AGAIN)
+            try_send(client_socket, WORD)
             continue
         else:
             try_send(client_socket, BYE)
