@@ -5,10 +5,11 @@
 from enum import Enum
 from socket import socket
 from wordle_library import Colors
+from typing import Tuple
 
 MAX_ATTEMPTS = 5
 
-def start_game(word: str, socket: socket) -> bool:
+def start_game(word: str, socket: socket) -> Tuple[bool, int]:
     """ Start the game of wordle and commence gameplay
         word <- the word trying to be guessed by the user
         Returns True if the player wins the game, False if the player exceeds max attempts
@@ -31,24 +32,24 @@ def start_game(word: str, socket: socket) -> bool:
         if not guess.isalpha():
             print("Guess must only contain letters")
             continue
+        num_attempts += 1
 
         guess = W_Guess(guess)  # convert guess into wordle guess with the result encapsulated
         is_winner = guess.check(word)
         if is_winner:
             print(guess.output())
-            print(f"You got the word in {num_attempts}")
+            print(f"You got the word in {num_attempts} attempt")
             print("======Game Finish======")
-            return True
+            return True, num_attempts
 
         prev_guesses.append(guess)
-        num_attempts += 1
         socket.try_send()
 
 
     # All attempts used up, you lose
     print(f"Darn you couldn't guess {word}")
     print("======Game Finish======")
-    return False
+    return False, 5
 
 class W_GuessType(Enum):
     CorrectPosCorrectLetter = 1

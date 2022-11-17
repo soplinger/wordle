@@ -10,10 +10,12 @@ def try_send(sender: socket, msg: bytes, debug: bool = False):
             `msg` : the message that is being sent in bytes, str must be encoded
     """
     try:
-        print(f"Sending msg: {msg}")
+        if debug:
+            print(f"Sending msg: {msg}")
         bytes_sent = sender.send(msg)
-        info = sender.getpeername()
-        print(f"Bytes sent: {bytes_sent}/{len(msg)} to location: {info}")
+        if debug:
+            info = sender.getpeername()
+            print(f"Bytes sent: {bytes_sent}/{len(msg)} to location: {info}")
     except socket.gaierror as e:    #TODO change error message or delete
         print_err(f"Error: {e}")
         exit(-1)
