@@ -5,41 +5,47 @@ import sys
 import json
 
 
-def userHandler(clientInfo):
+def userHandler(newSocket, address):
 
-    message = bytesAddressPair[0]
-    address = bytesAddressPair[1]
-
-    m = {"word": random.choice(words)}
-
-    data = json.dumps(m)
-
-    clientMsg = "Message from Client:{}".format(message)
-    clientIP = "Client IP Address:{}".format(address)
-
-    print(clientMsg)
-    print(clientIP)
+    receivedData = newSocket.recv(1024)
+    print(f"recieved {receivedData}")
 
     bytesToSend = str.encode(random.choice(words))
+    newSocket.send(bytesToSend)
 
-    UDPServerSocket.sendto(bytesToSend, address)
+    receivedData = newSocket.recv(1024)
+    responses = receivedData.decode().split()
+
+    print(responses)
+
+    match responses[0]:
+        case 'WIN':
+            print(f"client correct took {responses[1]} attempts")
+        case 'LOSE':
+            print(f"client lost took {responses[1]} attempts")
+
+    newSocket.close()
 
 
 with open("dict.txt", "r") as file:
     allText = file.read()
     words = list(map(str, allText.split()))
 
-localIP = "127.0.0.1"
+localIP = "156.12.184.62"
 localPort = 20001
 bufferSize = 1024
 
-UDPServerSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+TCPServerSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
 
-UDPServerSocket.bind((localIP, localPort))
+TCPServerSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-print("UDP Server Listening")
+TCPServerSocket.bind((localIP, localPort))
+
+print("TCP Server Listening")
+
+TCPServerSocket.listen(10)
 
 while (True):
 
-    bytesAddressPair = UDPServerSocket.recvfrom(bufferSize)
-    userHandler(bytesAddressPair)
+    newSocket, address = TCPServerSocket.accept()
+    userHandler(newSocket, address)
