@@ -2,7 +2,7 @@ from socket import socket
 from wordle_library.colors import Colors
 from wordle_library.typeshed import ServerAddress
 
-def try_send(sender: socket, msg: bytes, debug: bool = False):
+def try_send(sender: socket, msg: str, debug: bool = False):
     """ Attempts to send a message and will catch exceptions thrown by sendto() before exiting
 
         Args:
@@ -12,7 +12,7 @@ def try_send(sender: socket, msg: bytes, debug: bool = False):
     try:
         if debug:
             print(f"Sending msg: {msg}")
-        bytes_sent = sender.send(msg)
+        bytes_sent = sender.send(msg.encode(errors='replace'))
         if debug:
             info = sender.getpeername()
             print(f"Bytes sent: {bytes_sent}/{len(msg)} to location: {info}")

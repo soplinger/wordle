@@ -7,6 +7,9 @@ from socket import socket
 from wordle_library import Colors
 from typing import Tuple
 
+from wordle_library import try_send
+from wordle_library.response_strs import PLAYING 
+
 MAX_ATTEMPTS = 5
 
 def start_game(word: str, socket: socket) -> Tuple[bool, int]:
@@ -43,7 +46,7 @@ def start_game(word: str, socket: socket) -> Tuple[bool, int]:
             return True, num_attempts
 
         prev_guesses.append(guess)
-        socket.try_send()
+        try_send(socket, PLAYING)
 
 
     # All attempts used up, you lose
