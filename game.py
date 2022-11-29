@@ -9,7 +9,7 @@ from typing import Tuple
 
 from wordle_library import try_send, PLAYING
 
-MAX_ATTEMPTS = 5
+MAX_ATTEMPTS = 6
 
 def start_game(word: str, socket: socket) -> Tuple[bool, int]:
     """ Start the game of wordle and commence gameplay
@@ -51,7 +51,7 @@ def start_game(word: str, socket: socket) -> Tuple[bool, int]:
     # All attempts used up, you lose
     print(f"Darn you couldn't guess {word}")
     print("======Game Finish======")
-    return False, 5
+    return False, MAX_ATTEMPTS
 
 class W_GuessType(Enum):
     CorrectPosCorrectLetter = 1

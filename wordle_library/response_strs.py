@@ -1,12 +1,12 @@
 # initialize connection
-HELLO = "Hello"
+HELLO = "Hello%"
 
 # gameplay status updates
-PLAYING = "Playing"
-WIN = "Win"
-LOSE = "Lose"
+PLAYING = "Playing%"
+WIN = "Win%"
+LOSE = "Lose%"
 
 # replay messages
-AGAIN = "Again"
-WORD = "Word"
-BYE = "Bye"
+AGAIN = "Again%"
+WORD = "Word%"
+BYE = "Bye%"

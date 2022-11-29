@@ -2,31 +2,37 @@
 # edits and revisions by Sean Oplinger and Benjamin Lloyd
 import random
 import socket
+import sys
 import threading
 from typing import Tuple
 
 from wordle_exceptions import WordleGameEmptyGuess, WordleGameTimout
-from wordle_library import print_err, try_send, Colors, log
+from wordle_library import Colors, ServerAddress, log, print_err, try_send
 from wordle_library.response_strs import AGAIN, BYE, LOSE, PLAYING, WIN
 
-HOSTNAME = "127.0.0.1"
-PORT = 20001
 MAX_BUFFER_SIZE = 1024
 TIMEOUT_SECS = 10000
 MAX_CONNECTIONS = 100
 
 def main():
     print(Colors.Normal, end="")   # set terminal colors to print in white
+
+    server_addr = ServerAddress()   # a tuple containing relavent server information
+    if len(sys.argv) == 2:
+        if sys.argv[1].isnumeric():
+            server_addr = server_addr._replace(port=int(sys.argv[1]))
+            print(f"Server configured to port# {server_addr.port}")
+
     try:
         server_socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
-        # allows the socket to reuse a previous socket on the same address
+        # allows the socket to reuse a previous socket on the same address rather than closing it after usage
         server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        server_socket.bind((HOSTNAME, PORT))
+        server_socket.bind(server_addr)
     except Exception as e:
         print_err(f"Error while creating socket: {e}")
         exit(-1)
     else:
-        log("TCP Server created and listening...")
+        log(f"TCP server established at {server_addr.hostname} on port {server_addr.port}")
 
     server_socket.listen(MAX_CONNECTIONS)
 
@@ -91,7 +97,7 @@ def start_game(sender: socket.socket, username: str) -> Tuple[str, int]:
     responses = [PLAYING]
 
     while True:
-        # recieve playing messages as a keep alive 
+        # recieve playing messages from user to know they still have a healthy connection 
         try:
             response: bytes = sender.recv(MAX_BUFFER_SIZE)
         except socket.timeout:
@@ -103,7 +109,7 @@ def start_game(sender: socket.socket, username: str) -> Tuple[str, int]:
 
         log(f"Keep alive recieved from {username}")
         if responses[0] == WIN or responses[0] == LOSE:
-            log(f"Client: {username} {responses[0]} and finished in {responses[1]} attempts")
+            log(f"Client: {username} finished. Outcome: {responses[0].strip('%')} # of attempts: {responses[1]}")
             return responses[0], responses[1]
 
 with open("dict.txt", "r") as file:

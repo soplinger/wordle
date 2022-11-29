@@ -10,10 +10,10 @@ MAX_BUFFER_SIZE = 1024
 
 def main():
     print(Colors.Normal)
-    server_addr = ServerAddress()
+    server_addr = ServerAddress()   # a tuple containing relavent server information
     # Argument Parsing VVVVVV
     # User may pass a custom hostname or port and will be set for the server address
-    # as well they may add a custom username for hiscore tracking
+    # as well they may add a custom username for easier identification of clients
     name = "Guest#" + str(random.randint(0, 1000000000))
     if len(sys.argv) > 1:
         hostname = sys.argv[1]
@@ -22,7 +22,7 @@ def main():
 
         if len(sys.argv) > 2:
             if sys.argv[2].isnumeric():
-                port = sys.argv[2]
+                port = int(sys.argv[2])
                 print(f"Custom port entered: {port}")
                 server_addr = server_addr._replace(port=port)
                 if len(sys.argv) > 3:
