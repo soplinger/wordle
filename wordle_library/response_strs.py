@@ -1,10 +1,12 @@
 # initialize connection
-HELLO = "Hello%"
+# % is ommited as a name will be sent in unison and will contain the %
+HELLO = "Hello"
 
 # gameplay status updates
 PLAYING = "Playing%"
-WIN = "Win%"
-LOSE = "Lose%"
+# % is omitted as number of attempts will be sent in unison and will contain the %
+WIN = "Win"
+LOSE = "Lose"
 
 # replay messages
 AGAIN = "Again%"
