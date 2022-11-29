@@ -21,11 +21,7 @@ MAX_CONNECTIONS = 100
 def main():
     print(Colors.Normal, end="")   # set terminal colors to print in white
 
-    server_addr = ServerAddress()   # a tuple containing info about a server including host and port #
-    if len(sys.argv) == 2:
-        if sys.argv[1].isnumeric():
-            server_addr = server_addr._replace(port=int(sys.argv[1]))
-            print(f"Server configured to port# {server_addr.port}")
+    server_addr = parse_cmdline_args()
 
     try:
         server_socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
@@ -45,6 +41,15 @@ def main():
         thread = threading.Thread(target=user_handler, args=[new_socket])
         thread.start()
 
+def parse_cmdline_args() -> ServerAddress:
+    """Parses the cmdline args, checks for custom port number"""
+    server_addr = ServerAddress()   # a tuple containing info about a server including host and port #
+    if len(sys.argv) == 2:
+        if sys.argv[1].isnumeric():
+            server_addr = server_addr._replace(port=int(sys.argv[1]))
+            print(f"Server configured to port# {server_addr.port}")
+    return server_addr
+
 def user_handler(sender: socket.socket):
     """ Function that will send and recieve messages with a client connected via the `sender` socket
         This will orchestrate a Wordle game as well as replays and clean up
@@ -55,7 +60,6 @@ def user_handler(sender: socket.socket):
     response = sender.recv(MAX_BUFFER_SIZE)
     responses = response.decode().split()
 
-    username: str = ""
     # Setup identity for client by username
     if len(responses) < 2:
         info = sender.getpeername()
@@ -94,7 +98,7 @@ def start_game(sender: socket.socket, username: str) -> Tuple[str, int]:
         The game will end if stale data or no response is given 
         
         Returns:
-            `status`, `num_attempts` <- the outcome of the game and how many turns the game lasted
+            `(status, num_attempts)` <- the outcome of the game and how many turns the game lasted
 
         Errors:
             Will throw errors if gameplay does not proceed as intended `WordleGameTimeout` and `WordleGameEmptyGuess`
@@ -118,7 +122,7 @@ def start_game(sender: socket.socket, username: str) -> Tuple[str, int]:
         log(f"Keep alive recieved from {username}")
         if responses[0] == WIN or responses[0] == LOSE:
             color = Colors.Green if responses[0] == WIN else Colors.Red
-            log(f"Client: {username} finished Outcome: {color}{responses[0].strip('%')}{Colors.Normal} # of attempts: {responses[1]}")
+            log(f"Client: {username} finished with outcome: {color}{responses[0].strip('%')}{Colors.Normal} | # of attempts: {responses[1]}")
             return responses[0], responses[1]
 
 with open("dict.txt", "r") as file:

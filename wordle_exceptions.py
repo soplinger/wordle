@@ -2,7 +2,7 @@
 
 class WordleGameTimout(Exception):
     def __init__(self):
-        self.msg = "Game did not recieved a response and timed out"
+        self.msg = "Game did not recieve a response and timed out"
 
     def __str__(self) -> str:
         return repr(self.msg)
