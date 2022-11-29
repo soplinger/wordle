@@ -25,9 +25,9 @@ Python has the *luxury* of being intrepted so this step will be skipped.<br />
 
 ## How to run the client and server
 The server can be started by typing, the port number is *optional*<br />
-`python server.py <port#>`
+`python server.py <port#>`<br />
 The client can be started by typing, the port number and hostname are *optional*<br />
-`python client.py <port#> <hostname>`
+`python client.py <port#> <hostname>`<br />
 
 ## Potocol developed and syntax
 
