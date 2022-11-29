@@ -2,9 +2,9 @@
 Wordle is a word guessing game. You have 6 attempts and each attempt you make reveals some information.
 
 ## Team members and responsibility
-Sean Oplinger (Team Leader) -  client implementation <br />
+Sean Oplinger (Team Leader) - server implementation <br/>
 Nafis Conix - library and readme implementation <br />
-Ben Lloyd - server implementation <br />
+Ben Lloyd - client implementation <br />
 
 ## Description
 
