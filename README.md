@@ -21,11 +21,16 @@ There is also a library that was created that contain common functions that will
 
 
 ## How to compile the client and server
+Python has the *luxury* of being intrepted so this step will be skipped.
 
 ## How to run the client and server
+The server can be started by typing, the port number is *optional*
+`python server.py <port#>`
+The client can be started by typing, the port number and hostname are *optional*
+`python client.py <port#> <hostname>`
 
 ## Potocol developed and syntax
 
 ## Library type
-Shared library - the reason for using this type of library was so we only have to load the library code once which will
-use less memory space.
+Shared library - the reason for using this type of library is so we only have to load the library code once which will
+use less memory space. This also allows for common functionalities to be defined once and shared by whoever needs it.
