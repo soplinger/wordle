@@ -21,12 +21,12 @@ There is also a library that was created that contain common functions that will
 
 
 ## How to compile the client and server
-Python has the *luxury* of being intrepted so this step will be skipped.
+Python has the *luxury* of being intrepted so this step will be skipped.<br />
 
 ## How to run the client and server
-The server can be started by typing, the port number is *optional*
+The server can be started by typing, the port number is *optional*<br />
 `python server.py <port#>`
-The client can be started by typing, the port number and hostname are *optional*
+The client can be started by typing, the port number and hostname are *optional*<br />
 `python client.py <port#> <hostname>`
 
 ## Potocol developed and syntax
