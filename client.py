@@ -1,3 +1,9 @@
+""" client.py created by Benjamin Lloyd on 11/3/2022
+    revisions made by Benjamin Lloyd and Sean Oplinger
+
+    This file contains the client code of the Wordle application, it can interact with a Wordle server
+    provided that it uses the same messaging protocol designed into this application
+"""
 import random
 import socket
 import sys
@@ -9,8 +15,9 @@ from wordle_library import (AGAIN, BYE, HELLO, LOSE, WIN, Colors,
 MAX_BUFFER_SIZE = 1024
 
 def main():
-    print(Colors.Normal)
-    server_addr = ServerAddress()   # a tuple containing relavent server information
+    print(Colors.Normal, end="")   # set terminal colors to print in white
+    server_addr = ServerAddress()   # a tuple containing info about a server including host and port #
+
     # Argument Parsing VVVVVV
     # User may pass a custom hostname or port and will be set for the server address
     # as well they may add a custom username for easier identification of clients
@@ -29,9 +36,8 @@ def main():
                     name = sys.argv[2]
             elif sys.argv[2]:
                 name = sys.argv[2]
-            
-            print(f"Welcome user {name}")
 
+    print(f"Welcome user {name}")
     ready_msg = HELLO + f" {name}"
 
     try:
@@ -41,16 +47,16 @@ def main():
         print_err(f"Error while creating socket: {e}")
         exit(-1)
 
-    # Send a "hello name" to establish a identity on the server 
+    # Send a "hello <name>" to establish a identity on the server 
     try_send(client_socket, ready_msg)
 
     # get the word and start a game
     response = client_socket.recv(MAX_BUFFER_SIZE)
-    # msg = f"Message from Server {response}"
-    # print(msg)  # print out solution
+
     while True:
         outcome = start_game(response.decode().lower(), client_socket)
-        outcome_msg = f"{WIN} {outcome[1]}" if outcome[0] else f"{LOSE} {outcome[1]}"
+        is_winner = outcome[0]
+        outcome_msg = f"{WIN} {outcome[1]}" if is_winner else f"{LOSE} {outcome[1]}"
         try_send(client_socket, outcome_msg)
 
         response = client_socket.recv(MAX_BUFFER_SIZE)

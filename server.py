@@ -1,5 +1,9 @@
-# server.py created by Sean Oplinger on 10/26/22
-# edits and revisions by Sean Oplinger and Benjamin Lloyd
+""" server.py created by Sean Oplinger on 10/26/22
+    edits and revisions by Sean Oplinger and Benjamin Lloyd
+    
+    This file contains the code to run a wordle server compatible with the provided client or
+    any client that follows the server protocol.
+"""
 import random
 import socket
 import sys
@@ -17,7 +21,7 @@ MAX_CONNECTIONS = 100
 def main():
     print(Colors.Normal, end="")   # set terminal colors to print in white
 
-    server_addr = ServerAddress()   # a tuple containing relavent server information
+    server_addr = ServerAddress()   # a tuple containing info about a server including host and port #
     if len(sys.argv) == 2:
         if sys.argv[1].isnumeric():
             server_addr = server_addr._replace(port=int(sys.argv[1]))
@@ -42,6 +46,9 @@ def main():
         thread.start()
 
 def user_handler(sender: socket.socket):
+    """ Function that will send and recieve messages with a client connected via the `sender` socket
+        This will orchestrate a Wordle game as well as replays and clean up
+    """
     sender.settimeout(TIMEOUT_SECS)
 
     # Initial connection message and username obtained
@@ -77,6 +84,7 @@ def user_handler(sender: socket.socket):
             cleanup(sender)
 
 def cleanup(socket: socket.socket):
+    """ Closes a socket and exits current thread"""
     socket.close()
     exit(0)
 
@@ -109,7 +117,8 @@ def start_game(sender: socket.socket, username: str) -> Tuple[str, int]:
 
         log(f"Keep alive recieved from {username}")
         if responses[0] == WIN or responses[0] == LOSE:
-            log(f"Client: {username} finished. Outcome: {responses[0].strip('%')} # of attempts: {responses[1]}")
+            color = Colors.Green if responses[0] == WIN else Colors.Red
+            log(f"Client: {username} finished Outcome: {color}{responses[0].strip('%')}{Colors.Normal} # of attempts: {responses[1]}")
             return responses[0], responses[1]
 
 with open("dict.txt", "r") as file:
