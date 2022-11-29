@@ -28,7 +28,7 @@ The server can be started by typing, the port number is *optional*<br />
 The client can be started by typing, the port number and hostname are *optional*<br />
 `python client.py <port#> <hostname>`<br />
 
-## Potocol developed and syntax
+## Protocol developed and syntax
 ![Sequence Diagram](SequenceDiagram.jpg)
 ### Definition
 Each message, with the exclusion of random word and username, is represented as a capitalized string with % appended as the delimiter of the message. ie. WORD is represented as "WORD%"
